@@ -199,7 +199,7 @@ public class LoggedInMenu {
         }
 
         for (paymentHistoryList paymentHistoryList : paymentHistory) {
-            System.out.println("\t\t" + accountSql.getNameFromAccountNumber(paymentHistoryList.getAccountToOrFrom()) + " - " + paymentHistoryList.getAccountToOrFrom()
+            System.out.println("\t\t" + accountSql.getNameFromAccountNumber(paymentHistoryList.getReceiverAccount()) + " - " + paymentHistoryList.getReceiverAccount()
                     + "\n\t\t\t" + paymentHistoryList.getDate()
                     + "\t\t\tAmount: " + paymentHistoryList.getAmount() + "€"
                     + "\t\t\tType of transaction: " + paymentHistoryList.getType()

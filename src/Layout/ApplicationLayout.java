@@ -2,6 +2,7 @@
 package Layout;
 
 import ApplicationMenu.Methods;
+import ApplicationMenu.TypesOfTransactionEnum;
 import DataSQL.AccountSql;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class ApplicationLayout extends JFrame {
 
     JLabel enabledSymbol;
     JPanel panelMenu = new JPanel();
-    JPanel panelContents = new JPanel();
+//    JPanel panelContents = new JPanel();
     Methods methods = new Methods();
     AccountSql accountSql = new AccountSql();
     String[] wordsCanBeCleared = {"Email","Password","Name","Beneficiary Name","Account number","Amount","Information for Beneficiary"};
@@ -232,7 +233,7 @@ public class ApplicationLayout extends JFrame {
 
     }
 
-    protected boolean textFieldIsEnabled(JTextField textField) {
+    protected boolean textFieldBorderWhenFieldIsEmpty(JTextField textField) {
         if (textField.getText().isEmpty()) {
             textField.setBorder(setBorder(125, 3, 3, 3));
             return true;
@@ -272,9 +273,9 @@ public class ApplicationLayout extends JFrame {
             }
         });
 
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(10,Integer.MAX_VALUE));
         scrollPane.getVerticalScrollBar().setBackground(new Color(32, 25, 27));
-
         scrollPane.setBorder(null);
         scrollPane.setBounds(x,y,width,height);
 
@@ -316,6 +317,7 @@ public class ApplicationLayout extends JFrame {
         });
 
         scrollPane.setOpaque(true);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(10,Integer.MAX_VALUE));
         scrollPane.getVerticalScrollBar().setBackground(new Color(32, 25, 27));
         scrollPane.setViewportView(jpanel);
@@ -328,13 +330,19 @@ public class ApplicationLayout extends JFrame {
         return scrollPane;
     }
 
-    protected JTextField textInPaymentHistoryBox(JTextField textField,String text, int fontSize, String color) {
-//        textField = new JTextField();
-        if(color.equals("green")) {
+    protected JTextField textInPaymentHistoryBox(String text, int fontSize, String color, int x, int y, int width, int height) {
+
+        JTextField textField = new JTextField();
+
+        if(color.equals(String.valueOf(TypesOfTransactionEnum.Credit))) {
             textField.setForeground(new Color(149,200,67));
+        } else if(color.equals(String.valueOf(TypesOfTransactionEnum.Debit))) {
+            textField.setForeground(new Color(170,10,30));
         } else {
             textField.setForeground(new Color(202,202,202));
         }
+
+        textField.setBounds(x,y,width,height);
         textField.setOpaque(true);
         textField.setBorder(null);
         textField.setBackground(null);
@@ -345,8 +353,24 @@ public class ApplicationLayout extends JFrame {
         return textField;
     }
 
+    protected JTextArea textAreaInPaymentHistoryBox(String text, int fontSize, int x, int y, int width, int height) {
 
+        JTextArea textArea = new JTextArea();
 
+        textArea.setForeground(new Color(202,202,202));
+        textArea.setBounds(x,y,width,height);
+//        textArea.setOpaque(false);
+
+        textArea.setBackground(new Color(37, 11, 53));
+        textArea.setText(text);
+        textArea.setCaretPosition(0);
+        textArea.setEditable(false);
+        textArea.setFont(setFont(fontSize));
+        textArea.setLayout(null);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        return textArea;
+    }
 
 }
 
