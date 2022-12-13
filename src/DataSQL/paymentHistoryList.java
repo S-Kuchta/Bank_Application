@@ -2,18 +2,21 @@ package DataSQL;
 
 public class paymentHistoryList {
 
-    private int accountToOrFrom;
+    private int receiverAccount;
     private double amount;
     private String type;
     private String date;
     private String informationForBeneficiary;
+    private int senderAccount;
+    private int belongsToAccount;
+    private String id;
 
-    public int getAccountToOrFrom() {
-        return accountToOrFrom;
+    public int getReceiverAccount() {
+        return receiverAccount;
     }
 
-    public void setAccountToOrFrom(int accountToOrFrom) {
-        this.accountToOrFrom = accountToOrFrom;
+    public void setReceiverAccount(int receiverAccount) {
+        this.receiverAccount = receiverAccount;
     }
 
     public double getAmount() {
@@ -46,5 +49,29 @@ public class paymentHistoryList {
 
     public void setInformationForBeneficiary(String informationForBeneficiary) {
         this.informationForBeneficiary = informationForBeneficiary;
+    }
+
+    public int getSenderAccount() {
+        return senderAccount;
+    }
+
+    public void setSenderAccount(int senderAccount) {
+        this.senderAccount = senderAccount;
+    }
+
+    public int getBelongsToAccount() {
+        return belongsToAccount;
+    }
+
+    public void setBelongsToAccount(int belongsToAccount) {
+        this.belongsToAccount = belongsToAccount;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

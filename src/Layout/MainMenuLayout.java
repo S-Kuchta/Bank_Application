@@ -50,8 +50,23 @@ public class MainMenuLayout extends ApplicationLayout {
      public JPanel panelMenu() {
         panelMenu = super.panelMenu();
         panelMenu.add(super.leftSideDate());
-        panelMenu.add(logInButton());
-        panelMenu.add(signInButton());
+
+        JButton buttonLogIn = new JButton();
+        buttonLogIn.setBounds(0, 200, 252, 59);
+        buttonLogIn.setIcon(imageButtonLogIn);
+        buttonLogIn.setRolloverIcon(imageButtonLogInRollOver);
+        super.defaultImageButtonSet(buttonLogIn);
+        buttonLogIn.addActionListener(e -> logInPanel());
+
+        JButton buttonSignUp = new JButton();
+        buttonSignUp.setBounds(0, 299, 252, 59);
+        buttonSignUp.setIcon(imageButtonSignUp);
+        buttonSignUp.setRolloverIcon(imageButtonSignUpRollOver);
+        super.defaultImageButtonSet(buttonSignUp);
+        buttonSignUp.addActionListener(e -> signInPanel());
+
+        panelMenu.add(buttonLogIn);
+        panelMenu.add(buttonSignUp);
         return panelMenu;
     }
 
@@ -61,15 +76,35 @@ public class MainMenuLayout extends ApplicationLayout {
     }
 
     private JPanel signUpContents() {
+        JButton buttonSignUpToAccount = new JButton();
+        buttonSignUpToAccount.setText("Sign Up");
+        buttonSignUpToAccount.setBounds(250, 370, 130, 25);
+        super.defaultButtonSet(buttonSignUpToAccount,22);
+
+            textFieldEmailSignUp = new JTextField();
+            super.textFieldSet(textFieldEmailSignUp, "Email",190,messageAfterEnteredData);
+            textFieldEmailSignUp.setBounds(100, 190, 250, 30);
+
+            textFieldPasswordSignUp = new JPasswordField();
+            super.textFieldSet(textFieldPasswordSignUp, "Password",250,messageAfterEnteredData);
+            textFieldPasswordSignUp.setBounds(100, 250, 250, 30);
+
+            textFieldNameSignUp = new JTextField();
+            super.textFieldSet(textFieldNameSignUp, "Name",310,messageAfterEnteredData);
+            textFieldNameSignUp.setBounds(100, 310, 250, 30);
+
+
+        buttonSignUpToAccount.addActionListener(e -> signInToAccountButtonPressed());
+
         signUpContents = new JPanel();
         panelContents(signUpContents,false);
         signUpContents.add(super.textAboveTextField("Email", 100,158));
         signUpContents.add(super.textAboveTextField("Password", 100,218));
         signUpContents.add(super.textAboveTextField("Name", 100,278));
-        signUpContents.add(signInToAccountButton());
-        signUpContents.add(textFieldEmailSignUp());
-        signUpContents.add(textFieldPasswordSignUp());
-        signUpContents.add(textFieldNameSignUp());
+        signUpContents.add(buttonSignUpToAccount);
+        signUpContents.add(textFieldEmailSignUp);
+        signUpContents.add(textFieldPasswordSignUp);
+        signUpContents.add(textFieldNameSignUp);
         signUpContents.add(super.titleAboveLayout("Create new account",100,120));
         return signUpContents;
     }
@@ -77,11 +112,28 @@ public class MainMenuLayout extends ApplicationLayout {
     private JPanel logInContents() {
         logInContents = new JPanel();
         panelContents(logInContents,false);
-        logInContents.add(logInToAccountButton());
+
+        JButton buttonLogInToAccount = new JButton();
+        buttonLogInToAccount.setText("Log In");
+        buttonLogInToAccount.setBounds(250, 310, 130, 25);
+        super.defaultButtonSet(buttonLogInToAccount,22);
+
+        textFieldEmailLogIn = new JTextField();
+        super.textFieldSet(textFieldEmailLogIn, "stevo@mail.com",190, messageAfterEnteredData);
+        textFieldEmailLogIn.setBounds(100, 190, 250, 30);
+
+        textFieldPasswordLogIn = new JPasswordField();
+        super.textFieldSet(textFieldPasswordLogIn, "12345",190,messageAfterEnteredData);
+        textFieldPasswordLogIn.setBounds(100, 250, 250, 30);
+
+        buttonLogInToAccount.addActionListener(e -> logInToAccountButtonPressed());
+
+        logInContents.add(buttonLogInToAccount);
         logInContents.add(super.textAboveTextField("Email", 100,158));
         logInContents.add(super.textAboveTextField("Password", 100,218));
-        logInContents.add(textFieldEmailLogIn());
-        logInContents.add(textFieldPasswordLogIN());
+        logInContents.add(textFieldEmailLogIn);
+        logInContents.add(textFieldPasswordLogIn);
+
         logInContents.add(super.titleAboveLayout("Log In to account",100,120));
         return logInContents;
     }
@@ -121,27 +173,6 @@ public class MainMenuLayout extends ApplicationLayout {
     }
 
 
-    private JButton logInToAccountButton() {
-        JButton buttonLogInToAccount = new JButton();
-        buttonLogInToAccount.setText("Log In");
-        buttonLogInToAccount.setBounds(250, 310, 130, 25);
-        super.defaultButtonSet(buttonLogInToAccount,22);
-
-        buttonLogInToAccount.addActionListener(e -> logInToAccountButtonPressed());
-        return buttonLogInToAccount;
-    }
-
-    private JButton signInToAccountButton() {
-        JButton buttonSignUpToAccount = new JButton();
-        buttonSignUpToAccount.setText("Sign Up");
-        buttonSignUpToAccount.setBounds(250, 370, 130, 25);
-        super.defaultButtonSet(buttonSignUpToAccount,22);
-
-        buttonSignUpToAccount.addActionListener(e -> signInToAccountButtonPressed());
-        return buttonSignUpToAccount;
-    }
-
-
     public void logInToAccountButtonPressed() {
         super.enableUnderlineInMenu(0, 0, false);
 
@@ -151,9 +182,9 @@ public class MainMenuLayout extends ApplicationLayout {
             messageAfterEnteredData(messageAfterEnteredData,  "Fields can't be empty", SignUpOrLogInEnum.LOGIN);
 
             for(int i = 0; i<2; i++) {
-                if (textFieldIsEnabled(textFieldEmailLogIn) && i == 0) {
+                if (textFieldBorderWhenFieldIsEmpty(textFieldEmailLogIn) && i == 0) {
                     textFieldEmailLogIn.setText("Email");
-                } else if (textFieldIsEnabled(textFieldPasswordLogIn) && i == 1) {
+                } else if (textFieldBorderWhenFieldIsEmpty(textFieldPasswordLogIn) && i == 1) {
                     textFieldPasswordLogIn.setText("Password");
                 }
             }
@@ -194,9 +225,9 @@ public class MainMenuLayout extends ApplicationLayout {
                 || String.valueOf(textFieldPasswordSignUp.getPassword()).isEmpty()
                 || textFieldNameSignUp.getText().isEmpty()
                 || datasource.emailExistChecker(textFieldEmailSignUp.getText())) {
-            super.textFieldIsEnabled(textFieldEmailSignUp);
-            super.textFieldIsEnabled(textFieldPasswordSignUp);
-            super.textFieldIsEnabled(textFieldNameSignUp);
+            super.textFieldBorderWhenFieldIsEmpty(textFieldEmailSignUp);
+            super.textFieldBorderWhenFieldIsEmpty(textFieldPasswordSignUp);
+            super.textFieldBorderWhenFieldIsEmpty(textFieldNameSignUp);
         } else {
             if (methods.checkEmailFormat(textFieldEmailSignUp.getText())) {
                 mainMenu.registerAccount(textFieldEmailSignUp.getText(), String.valueOf(textFieldPasswordSignUp.getPassword()), textFieldNameSignUp.getText());
@@ -212,28 +243,7 @@ public class MainMenuLayout extends ApplicationLayout {
         }
     }
 
-    private JButton logInButton() {
-        JButton buttonLogIn = new JButton();
-        buttonLogIn.setBounds(0, 200, 252, 59);
-        buttonLogIn.setIcon(imageButtonLogIn);
-        buttonLogIn.setRolloverIcon(imageButtonLogInRollOver);
-        super.defaultImageButtonSet(buttonLogIn);
-        buttonLogIn.addActionListener(e -> logInPanel());
-        return buttonLogIn;
-    }
-
-    private JButton signInButton() {
-        JButton buttonSignUp = new JButton();
-        buttonSignUp.setBounds(0, 299, 252, 59);
-        buttonSignUp.setIcon(imageButtonSignUp);
-        buttonSignUp.setRolloverIcon(imageButtonSignUpRollOver);
-        super.defaultImageButtonSet(buttonSignUp);
-        buttonSignUp.addActionListener(e -> signInPanel());
-        return buttonSignUp;
-    }
-
     private void logInPanel() {
-//        datasource.closeConnection();
         super.enableUnderlineInMenu(247, 90, true);
         signUpContents.setVisible(false);
         logInContents.setVisible(true);
@@ -241,44 +251,8 @@ public class MainMenuLayout extends ApplicationLayout {
 
     private void signInPanel() {
         super.enableUnderlineInMenu(347, 90, true);
-//        datasource.openConnection();
         logInContents.setVisible(false);
         signUpContents.setVisible(true);
-    }
-
-    private JTextField textFieldEmailLogIn() {
-        this.textFieldEmailLogIn = new JTextField();
-        super.textFieldSet(textFieldEmailLogIn, "stevo@mail.com",190, messageAfterEnteredData);
-        this.textFieldEmailLogIn.setBounds(100, 190, 250, 30);
-        return textFieldEmailLogIn;
-    }
-
-    private JPasswordField textFieldPasswordLogIN() {
-        textFieldPasswordLogIn = new JPasswordField();
-        super.textFieldSet(textFieldPasswordLogIn, "12345",190,messageAfterEnteredData);
-        textFieldPasswordLogIn.setBounds(100, 250, 250, 30);
-        return textFieldPasswordLogIn;
-    }
-
-    private JTextField textFieldEmailSignUp() {
-        textFieldEmailSignUp = new JTextField();
-        super.textFieldSet(textFieldEmailSignUp, "Email",190,messageAfterEnteredData);
-        textFieldEmailSignUp.setBounds(100, 190, 250, 30);
-        return textFieldEmailSignUp;
-    }
-
-    private JPasswordField textFieldPasswordSignUp() {
-        textFieldPasswordSignUp = new JPasswordField();
-        super.textFieldSet(textFieldPasswordSignUp, "Password",250,messageAfterEnteredData);
-        textFieldPasswordSignUp.setBounds(100, 250, 250, 30);
-        return textFieldPasswordSignUp;
-    }
-
-    private JTextField textFieldNameSignUp() {
-        textFieldNameSignUp = new JTextField();
-        super.textFieldSet(textFieldNameSignUp, "Name",310,messageAfterEnteredData);
-        textFieldNameSignUp.setBounds(100, 310, 250, 30);
-        return textFieldNameSignUp;
     }
 
 }

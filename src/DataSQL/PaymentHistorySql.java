@@ -16,7 +16,7 @@ public class PaymentHistorySql {
     public static final String COLUMN_AMOUNT = "amount";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_DATE = "date";
-
+    public static final String COLUMN_ID = "_id";
     public static final String COLUMN_INFORMATION_FOR_BENEFICIARY = "informationForBeneficiary";
     public static final String COLUMN_BELONGS_TO_ACCOUNT = "belongsToAccount";
 
@@ -84,11 +84,14 @@ public class PaymentHistorySql {
             List<paymentHistoryList> historyPayment = new ArrayList<>();
             while (results.next()) {
                 paymentHistoryList paymentHistory = new paymentHistoryList();
-                paymentHistory.setAccountToOrFrom(results.getInt(COLUMN_RECEIVER_ACCOUNT_NUMBER));
+                paymentHistory.setReceiverAccount(results.getInt(COLUMN_RECEIVER_ACCOUNT_NUMBER));
+                paymentHistory.setSenderAccount(results.getInt(COLUMN_SENDER_ACCOUNT_NUMBER));
                 paymentHistory.setAmount(results.getDouble(COLUMN_AMOUNT));
                 paymentHistory.setType(results.getString(COLUMN_TYPE));
                 paymentHistory.setDate(results.getString(COLUMN_DATE));
                 paymentHistory.setInformationForBeneficiary(results.getString(COLUMN_INFORMATION_FOR_BENEFICIARY));
+                paymentHistory.setBelongsToAccount(results.getInt(COLUMN_BELONGS_TO_ACCOUNT));
+                paymentHistory.setId(results.getString(COLUMN_ID));
                 historyPayment.add(paymentHistory);
             }
 
@@ -98,6 +101,17 @@ public class PaymentHistorySql {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
+    }
+
+    public String getInformationForBeneficiary(String id) {
+        try (ResultSet informationForBeneficiaryGet = statement.executeQuery(" SELECT " + COLUMN_INFORMATION_FOR_BENEFICIARY + " FROM " + TABLE_PAYMENT_HISTORY + " WHERE " + COLUMN_ID + " = " + id)) {
+            return informationForBeneficiaryGet.getString(COLUMN_INFORMATION_FOR_BENEFICIARY);
+
+        } catch (SQLException e) {
+            System.out.println("Something went wrong in getNameFromAccountNumber in DataSql." + e.getMessage());
+            System.exit(1);
+        }
+        return null;
     }
 
 }
