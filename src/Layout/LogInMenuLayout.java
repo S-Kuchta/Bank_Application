@@ -9,6 +9,8 @@ import DataSQL.paymentHistoryList;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class LogInMenuLayout extends ApplicationLayout {
@@ -35,7 +37,7 @@ public class LogInMenuLayout extends ApplicationLayout {
     JButton changeNameButton = new JButton();
     JButton changeEmailButton = new JButton();
     JButton changePasswordButton = new JButton();
-    JButton sendPaymentButton = new JButton();
+    //    JButton sendPaymentButton = new JButton();
     JButton topPanelBackButton = new JButton();
 
 
@@ -52,10 +54,6 @@ public class LogInMenuLayout extends ApplicationLayout {
     JPasswordField changePasswordNewPassword;
     JPasswordField changePasswordOldPassword;
 
-    JTextField beneficiary;
-    JTextField beneficiaryAccountNumber;
-    JTextField amount;
-    JTextArea informationForBeneficiary;
     JTextField accountBalanceShow;
 
     JLabel enabledSymbol = super.enabledSymbol();
@@ -248,8 +246,7 @@ public class LogInMenuLayout extends ApplicationLayout {
         } else if (accountSql.passwordCheck(getUserEmail(), String.valueOf(changeNamePasswordNeeded.getPassword()))) {
             changeNameLabel.add(messageAfterEnteredData("Name Successfully changed", true, 25, 165));
             accountSql.changeName(changeName.getText(), getUserEmail());
-            changeName.setText("Name");
-            changeNamePasswordNeeded.setText("Password");
+            changeAllTextsInChangeTextFields();
         } else {
             changeNameLabel.add(messageAfterEnteredData("Entered incorrect password", false, 25, 165));
         }
@@ -264,8 +261,7 @@ public class LogInMenuLayout extends ApplicationLayout {
             if (accountSql.passwordCheck(getUserEmail(), String.valueOf(changeEmailPasswordNeeded.getPassword()))) {
                 changeEmailLabel.add(messageAfterEnteredData("Email Successfully changed", true, 25, 165));
                 accountSql.changeEmail(changeEmail.getText(), getUserEmail());
-                changeEmail.setText("Email");
-                changeEmailPasswordNeeded.setText("Password");
+                changeAllTextsInChangeTextFields();
             } else {
                 changeEmailLabel.add(messageAfterEnteredData("Entered incorrect password", false, 25, 165));
             }
@@ -282,8 +278,7 @@ public class LogInMenuLayout extends ApplicationLayout {
         } else if (accountSql.passwordCheck(getUserEmail(), String.valueOf(changePasswordOldPassword.getPassword()))) {
             changePasswordLabel.add(messageAfterEnteredData("Password Successfully changed", true, 25, 165));
             accountSql.changePassword(String.valueOf(changePasswordNewPassword.getPassword()), getUserEmail());
-            changePasswordOldPassword.setText("Password");
-            changePasswordNewPassword.setText("Password");
+            changeAllTextsInChangeTextFields();
         } else {
             changePasswordLabel.add(messageAfterEnteredData("Entered incorrect password", false, 25, 165));
         }
@@ -416,13 +411,12 @@ public class LogInMenuLayout extends ApplicationLayout {
     private JButton topPanelBackButton() {
         topPanelBackButton.setBounds(10, 15, 100, 40);
         topPanelBackButton.setText("←");
-        topPanelBackButton.addActionListener(e->backButtonPressed());
+        topPanelBackButton.addActionListener(e -> backButtonPressed());
         super.defaultButtonSet(topPanelBackButton, 22);
         topPanelBackButton.setVisible(false);
-        topPanelBackButton.setFont(new Font("Minion Pro",Font.PLAIN,45));
+        topPanelBackButton.setFont(new Font("Minion Pro", Font.PLAIN, 45));
         return topPanelBackButton;
     }
-
 
 
     private JButton rightMenu() {
@@ -580,6 +574,239 @@ public class LogInMenuLayout extends ApplicationLayout {
     }
 
 
+    /**
+     * Send payment panels.
+     */
+    private JPanel panelSendPayment() {
+        panelSendPayment = new JPanel();
+        JLabel labelSendPayment = new JLabel();
+        labelSendPayment.setIcon(sendPaymentBackground);
+        labelSendPayment.setBounds(0, 0, 486, 404);
+        panelSendPayment.setBounds(285, 197, 486, 404);
+        panelSendPayment.setLayout(null);
+        panelSendPayment.add(textInputArea());
+        panelSendPayment.add(sendPaymentChangingArea());
+        panelSendPayment.add(labelSendPayment);
+        panelSendPayment.setOpaque(false);
+        panelSendPayment.setVisible(false);
+        return panelSendPayment;
+    }
+
+    private JPanel textInputArea() {
+        JButton sendPaymentButton = new JButton();
+        super.defaultButtonSet(sendPaymentButton, 25);
+        sendPaymentButton.setBounds(160, 320, 80, 70);
+        sendPaymentButton.setText("Send");
+
+        textInputArea = new JPanel();
+        JTextField beneficiary = new JTextField();
+        textFieldSet(beneficiary, "Beneficiary Name", 80, textField);
+
+        JTextField beneficiaryAccountNumber = new JTextField();
+        textFieldSet(beneficiaryAccountNumber, "Account number", 130, textField);
+
+        JTextField amount = new JTextField();
+        textFieldSet(amount, "Amount", 180, textField);
+
+        JTextArea informationForBeneficiary = new JTextArea();
+        textAreaSet(informationForBeneficiary, "Information for Beneficiary", 25, 230, 200, 80, textField);
+
+
+
+
+        textInputArea.add(sendPaymentButton);
+        textInputArea.add(super.scrollPanel(informationForBeneficiary, 25, 230, 200, 80));
+        textInputArea.add(super.titleAboveLayout("Send Payment", 25, 15));
+        textInputArea.add(super.textAboveTextField("Beneficiary Name", 25, 50));
+        textInputArea.add(beneficiary);
+        textInputArea.add(super.textAboveTextField("Beneficiary Account number", 25, 100));
+        textInputArea.add(beneficiaryAccountNumber);
+        textInputArea.add(super.textAboveTextField("Amount", 25, 150));
+        textInputArea.add(amount);
+        textInputArea.add(super.textAboveTextField("Information for Beneficiary", 25, 200));
+
+        sendPaymentButton.addActionListener(
+                e -> {pressedSendPaymentButton(beneficiary.getText(), Integer.parseInt(beneficiaryAccountNumber.getText()), Double.parseDouble(amount.getText()), informationForBeneficiary.getText());
+                            beneficiary.setText("Beneficiary name");
+                            beneficiaryAccountNumber.setText("Account number");
+                            amount.setText("Amount");
+                            informationForBeneficiary.setText("Information for Beneficiary");
+                });
+
+        textInputArea.setVisible(true);
+        textInputArea.setOpaque(false);
+        textInputArea.setLayout(null);
+        textInputArea.setBackground(Color.green);
+
+        textInputArea.setBounds(6, 8, 270, 390);
+        return textInputArea;
+    }
+
+    private JPanel sendPaymentChangingArea() {
+        JPanel sendPaymentChangingArea = new JPanel();
+        sendPaymentChangingArea.setVisible(true);
+        sendPaymentChangingArea.setLayout(null);
+        sendPaymentChangingArea.setBackground(Color.blue);
+        sendPaymentChangingArea.setBounds(284, 8, 197, 390);
+        return sendPaymentChangingArea;
+    }
+
+    private void pressedSendPaymentButton(String beneficiary, int beneficiaryAccountNumber, double amount, String informationForBeneficiary) {
+        if (!accountSql.accountNumberExistChecker(beneficiaryAccountNumber) && !accountSql.checkAndSubtractSenderAccountBalance(amount, getUserEmail())) {
+            textInputArea.add(messageAfterEnteredData("Not enough money", false, 25, 340));
+            textInputArea.add(messageAfterEnteredData("Beneficiary account does not exist", false, 25, 310));
+        }
+
+        if (accountSql.accountNumberExistChecker(beneficiaryAccountNumber)) {
+            if (accountSql.checkAndSubtractSenderAccountBalance(amount, getUserEmail())) {
+                accountSql.sendPayment((beneficiaryAccountNumber), amount);
+
+                paymentHistorySql.addPaymentToHistory(getAccountNumber(),
+                        beneficiaryAccountNumber,
+                        amount,
+                        TypesOfTransactionEnum.Debit,
+                        methods.currentDate(),
+                        informationForBeneficiary,
+                        getAccountNumber());
+
+                paymentHistorySql.addPaymentToHistory(getAccountNumber(),
+                        beneficiaryAccountNumber,
+                        amount,
+                        TypesOfTransactionEnum.Credit,
+                        methods.currentDate(),
+                        informationForBeneficiary,
+                        beneficiaryAccountNumber);
+
+                textInputArea.add(messageAfterEnteredData("Payment proceed successfully", true, 25, 310));
+
+            } else {
+                textInputArea.add(messageAfterEnteredData("Not enough money", false, 25, 310));
+            }
+        } else {
+            textInputArea.add(messageAfterEnteredData("Beneficiary account does not exist", false, 25, 310));
+        }
+    }
+
+
+    private JLayeredPane panelPayments() {
+        payments = new JLayeredPane();
+        JLabel labelPayments = new JLabel();
+        labelPayments.setIcon(paymentsBackground);
+        labelPayments.setBounds(0, 0, 486, 400);
+        payments.setBounds(285, 197, 486, 404);
+        payments.setLayout(null);
+        payments.setOpaque(false);
+        payments.setVisible(false);
+
+
+        payments.add(super.titleAboveLayout("Payments", 200, 10));
+        payments.add(paymentHistory(), Integer.valueOf(2));
+        payments.add(labelPayments);
+        return payments;
+    }
+
+    private JScrollPane paymentHistory() {
+        paymentHistoryPanel = new JPanel();
+        paymentHistoryScrollBar = new JScrollPane();
+        paymentHistoryScrollBar = super.scrollPanel(paymentHistoryPanel, 8, 50, 470, 330);
+        paymentHistoryPanel.setBackground(new Color(37, 11, 53));
+        paymentHistoryPanel.setLayout(new BoxLayout(paymentHistoryPanel, BoxLayout.PAGE_AXIS));
+
+        List<paymentHistoryList> paymentHistory = paymentHistorySql.queryPaymentHistory(getAccountNumber(), /*typesOfTransactionEnum*/TypesOfTransactionEnum.All);
+        for (paymentHistoryList paymentHistoryList : paymentHistory) {
+
+            String nameOfBeneficiaryInHistoryList = "";
+
+            if (paymentHistoryList.getType().equals(String.valueOf(TypesOfTransactionEnum.Credit))) {
+                nameOfBeneficiaryInHistoryList = accountSql.getNameFromAccountNumber(paymentHistoryList.getSenderAccount());
+            } else if (paymentHistoryList.getType().equals(String.valueOf(TypesOfTransactionEnum.Debit))) {
+                nameOfBeneficiaryInHistoryList = accountSql.getNameFromAccountNumber(paymentHistoryList.getReceiverAccount());
+            }
+
+            paymentHistoryPanel.add(dateShow(paymentHistoryList.getDate()));
+            paymentHistoryPanel.add(paymentHistoryRecord(paymentHistoryList.getType(), nameOfBeneficiaryInHistoryList, paymentHistoryList.getAmount(), paymentHistoryList.getInformationForBeneficiary(), paymentHistoryList.getId()));
+            paymentHistoryPanel.add(Box.createRigidArea(new Dimension(420, 15)));
+
+        }
+
+        return paymentHistoryScrollBar;
+    }
+
+    private JTextField dateShow(String date) {
+        JTextField dateShow = new JTextField();
+        dateShow.setPreferredSize(new Dimension(400, 25));
+        dateShow.setMaximumSize(new Dimension(400, 25));
+        dateShow.setText(date);
+        dateShow.setOpaque(false);
+        dateShow.setBorder(null);
+        dateShow.setEditable(false);
+        dateShow.setForeground(new Color(202, 202, 202));
+        dateShow.setFont(super.setFont(13));
+        return dateShow;
+    }
+
+
+    private JPanel paymentHistoryRecord(String typesOfTransaction, String name, Double amount, String informationForBeneficiaryText, String id) {
+        JPanel record = new JPanel();
+        JButton moreInformationButton = new JButton();
+
+
+        defaultButtonSet(moreInformationButton, 14);
+        moreInformationButton.setBounds(290, 29, 130, 15);
+        moreInformationButton.setText("More information");
+
+        record.setPreferredSize(new Dimension(430, 50));
+        record.setMaximumSize(new Dimension(430, 50));
+        record.setMinimumSize(new Dimension(430, 50));
+
+        record.setBackground(null);
+        record.setOpaque(true);
+        record.setLayout(null);
+        record.setBorder(new MatteBorder(1, 0, 1, 0, new Color(103, 92, 111)));
+
+        record.add(moreInformationButton);
+        moreInformationButton.addActionListener(e -> showDetailedPayment(id, informationForBeneficiaryText, true));
+
+        if (typesOfTransaction.equals(String.valueOf(TypesOfTransactionEnum.Credit))) {
+            record.add(super.textInPaymentHistoryBox("+", 20, typesOfTransaction, 20, 18, 15, 15));
+            String amountPlusEuro = "+ " + amount + " €";
+            record.add(super.textInPaymentHistoryBox(amountPlusEuro, 16, typesOfTransaction, 300, 5, 160, 20));
+        } else if (typesOfTransaction.equals(String.valueOf(TypesOfTransactionEnum.Debit))) {
+            record.add(super.textInPaymentHistoryBox("-", 20, typesOfTransaction, 20, 18, 15, 15));
+            String amountPlusEuro = "- " + amount + " €";
+            record.add(super.textInPaymentHistoryBox(amountPlusEuro, 16, typesOfTransaction, 300, 5, 160, 20));
+        }
+
+        record.add(super.textInPaymentHistoryBox(name, 16, "white", 55, 5, 250, 20));
+        record.add(super.textInPaymentHistoryBox(typesOfTransaction, 14, "white", 55, 29, 50, 15));
+
+        return record;
+    }
+
+    private void showDetailedPayment(String id, String informationForBeneficiary, boolean visible) {
+
+        detailedPayment = new JPanel();
+        detailedPayment.setLayout(null);
+        detailedPayment.setBounds(8, 50, 470, 330); // 470,330
+        detailedPayment.setOpaque(true);
+        detailedPayment.setBackground(new Color(37, 11, 53));
+        detailedPayment.setBorder(null);
+        detailedPayment.setVisible(visible);
+        detailedPayment.add(super.scrollPanel(super.textAreaInPaymentHistoryBox(informationForBeneficiary, 14, 40, 150, 300, 150), 20, 150, 400, 170));
+        paymentHistoryScrollBar.setVisible(false);
+        topPanelBackButton.setVisible(true);
+        payments.add(detailedPayment, Integer.valueOf(3));
+
+//        return detailedPayment;
+    }
+
+    private void backButtonPressed() {
+        detailedPayment.setVisible(false);
+        paymentHistoryScrollBar.setVisible(true);
+        topPanelBackButton.setVisible(false);
+    }
+
+
     public String getUserEmail() {
         return userEmail;
     }
@@ -610,239 +837,6 @@ public class LogInMenuLayout extends ApplicationLayout {
 
     public void setClicked(boolean clicked) {
         isClicked = clicked;
-    }
-
-
-    /**
-     * Send payment panels.
-     */
-    private JPanel panelSendPayment() {
-        panelSendPayment = new JPanel();
-        JLabel labelSendPayment = new JLabel();
-        labelSendPayment.setIcon(sendPaymentBackground);
-        labelSendPayment.setBounds(0, 0, 486, 404);
-        panelSendPayment.setBounds(285, 197, 486, 404);
-        panelSendPayment.setLayout(null);
-        panelSendPayment.add(textInputArea());
-        panelSendPayment.add(sendPaymentChangingArea());
-        panelSendPayment.add(labelSendPayment);
-        panelSendPayment.setOpaque(false);
-        panelSendPayment.setVisible(false);
-        return panelSendPayment;
-    }
-
-    private JPanel textInputArea() {
-        textInputArea = new JPanel();
-        beneficiary = new JTextField();
-        beneficiary.setText("");
-        beneficiaryAccountNumber = new JTextField();
-        beneficiaryAccountNumber.setText("");
-        amount = new JTextField();
-        amount.setText("");
-        informationForBeneficiary = new JTextArea();
-        informationForBeneficiary.setText("");
-
-        textFieldSet(beneficiary, "Beneficiary Name", 80, textField);
-        textFieldSet(beneficiaryAccountNumber, "Account number", 130, textField);
-        textFieldSet(amount, "Amount", 180, textField);
-        textAreaSet(informationForBeneficiary, "Information for Beneficiary", 25, 230, 200, 80, textField);
-
-        textInputArea.add(sendPaymentButton());
-        textInputArea.add(super.scrollPanel(informationForBeneficiary, 25, 230, 200, 80));
-        textInputArea.add(super.titleAboveLayout("Send Payment", 25, 15));
-        textInputArea.add(super.textAboveTextField("Beneficiary Name", 25, 50));
-        textInputArea.add(beneficiary);
-        textInputArea.add(super.textAboveTextField("Beneficiary Account number", 25, 100));
-        textInputArea.add(beneficiaryAccountNumber);
-        textInputArea.add(super.textAboveTextField("Amount", 25, 150));
-        textInputArea.add(amount);
-        textInputArea.add(super.textAboveTextField("Information for Beneficiary", 25, 200));
-
-        textInputArea.setVisible(true);
-        textInputArea.setOpaque(false);
-        textInputArea.setLayout(null);
-        textInputArea.setBackground(Color.green);
-
-        textInputArea.setBounds(6, 8, 270, 390);
-        return textInputArea;
-    }
-
-    private JPanel sendPaymentChangingArea() {
-        JPanel sendPaymentChangingArea = new JPanel();
-        sendPaymentChangingArea.setVisible(true);
-        sendPaymentChangingArea.setLayout(null);
-        sendPaymentChangingArea.setBackground(Color.blue);
-        sendPaymentChangingArea.setBounds(284, 8, 197, 390);
-        return sendPaymentChangingArea;
-    }
-
-    private JButton sendPaymentButton() {
-        super.defaultButtonSet(sendPaymentButton, 25);
-        sendPaymentButton.setBounds(160, 320, 80, 70);
-        sendPaymentButton.setText("Send");
-        sendPaymentButton.addActionListener(e -> pressedSendPaymentButton());
-        return sendPaymentButton;
-    }
-
-    private void pressedSendPaymentButton() {
-        if (!accountSql.accountNumberExistChecker(Integer.parseInt(beneficiaryAccountNumber.getText())) && !accountSql.checkAndSubtractSenderAccountBalance(Double.parseDouble(amount.getText()), getUserEmail())) {
-            textInputArea.add(messageAfterEnteredData("Not enough money", false, 25, 340));
-            textInputArea.add(messageAfterEnteredData("Beneficiary account does not exist", false, 25, 310));
-        }
-
-        if (accountSql.accountNumberExistChecker(Integer.parseInt(beneficiaryAccountNumber.getText()))) {
-            if (accountSql.checkAndSubtractSenderAccountBalance(Double.parseDouble(amount.getText()), getUserEmail())) {
-                accountSql.sendPayment(Integer.parseInt(beneficiaryAccountNumber.getText()), Double.parseDouble(amount.getText()));
-
-                paymentHistorySql.addPaymentToHistory(getAccountNumber(),
-                        Integer.parseInt(beneficiaryAccountNumber.getText()),
-                        Double.parseDouble(amount.getText()),
-                        TypesOfTransactionEnum.Debit,
-                        methods.currentDate(),
-                        informationForBeneficiary.getText(),
-                        getAccountNumber());
-
-                paymentHistorySql.addPaymentToHistory(getAccountNumber(),
-                        Integer.parseInt(beneficiaryAccountNumber.getText()),
-                        Double.parseDouble(amount.getText()),
-                        TypesOfTransactionEnum.Credit,
-                        methods.currentDate(),
-                        informationForBeneficiary.getText(),
-                        Integer.parseInt(beneficiaryAccountNumber.getText()));
-
-                textInputArea.add(messageAfterEnteredData("Payment proceed successfully", true, 25, 310));
-
-                beneficiary.setText("Beneficiary name");
-                beneficiaryAccountNumber.setText("Account number");
-                amount.setText("Amount");
-                informationForBeneficiary.setText("Information for Beneficiary");
-            } else {
-                textInputArea.add(messageAfterEnteredData("Not enough money", false, 25, 310));
-            }
-        } else {
-            textInputArea.add(messageAfterEnteredData("Beneficiary account does not exist", false, 25, 310));
-        }
-    }
-
-
-
-    private JLayeredPane panelPayments() {
-        payments = new JLayeredPane();
-        JLabel labelPayments = new JLabel();
-        labelPayments.setIcon(paymentsBackground);
-        labelPayments.setBounds(0, 0, 486, 400);
-        payments.setBounds(285, 197, 486, 404);
-        payments.setLayout(null);
-        payments.setOpaque(false);
-        payments.setVisible(false);
-
-
-        payments.add(super.titleAboveLayout("Payments", 200, 10));
-        payments.add(paymentHistory(),Integer.valueOf(2));
-        payments.add(labelPayments);
-        return payments;
-    }
-
-    private JScrollPane paymentHistory() {
-        paymentHistoryPanel = new JPanel();
-        paymentHistoryScrollBar = new JScrollPane();
-        paymentHistoryScrollBar = super.scrollPanel(paymentHistoryPanel, 8, 50, 470, 330);
-        paymentHistoryPanel.setBackground(new Color(37, 11, 53));
-        paymentHistoryPanel.setLayout(new BoxLayout(paymentHistoryPanel, BoxLayout.PAGE_AXIS));
-
-        List<paymentHistoryList> paymentHistory = paymentHistorySql.queryPaymentHistory(getAccountNumber(), /*typesOfTransactionEnum*/TypesOfTransactionEnum.All);
-        for (paymentHistoryList paymentHistoryList : paymentHistory) {
-
-            String nameOfBeneficiaryInHistoryList = "";
-
-            if(paymentHistoryList.getType().equals(String.valueOf(TypesOfTransactionEnum.Credit))) {
-                nameOfBeneficiaryInHistoryList = accountSql.getNameFromAccountNumber(paymentHistoryList.getSenderAccount());
-            } else if(paymentHistoryList.getType().equals(String.valueOf(TypesOfTransactionEnum.Debit))) {
-                nameOfBeneficiaryInHistoryList = accountSql.getNameFromAccountNumber(paymentHistoryList.getReceiverAccount());
-            }
-
-            paymentHistoryPanel.add(dateShow(paymentHistoryList.getDate()));
-            paymentHistoryPanel.add(paymentHistoryRecord(paymentHistoryList.getType(),nameOfBeneficiaryInHistoryList,paymentHistoryList.getAmount(),paymentHistoryList.getInformationForBeneficiary(),paymentHistoryList.getId()));
-            paymentHistoryPanel.add(Box.createRigidArea(new Dimension(420, 15)));
-
-        }
-
-        return paymentHistoryScrollBar;
-    }
-
-    private JTextField dateShow(String date) {
-        JTextField dateShow = new JTextField();
-        dateShow.setPreferredSize(new Dimension(400,25));
-        dateShow.setMaximumSize(new Dimension(400,25));
-        dateShow.setText(date);
-        dateShow.setOpaque(false);
-        dateShow.setBorder(null);
-        dateShow.setEditable(false);
-        dateShow.setForeground(new Color(202,202,202));
-        dateShow.setFont(super.setFont(13));
-        return dateShow;
-    }
-
-
-
-    private JPanel paymentHistoryRecord(String typesOfTransaction, String name, Double amount, String informationForBeneficiaryText, String id) {
-        JPanel record = new JPanel();
-        JButton moreInformationButton = new JButton();
-
-
-        defaultButtonSet(moreInformationButton,14);
-        moreInformationButton.setBounds(290,29,130,15);
-        moreInformationButton.setText("More information");
-
-        record.setPreferredSize(new Dimension(430, 50));
-        record.setMaximumSize(new Dimension(430, 50));
-        record.setMinimumSize(new Dimension(430, 50));
-
-        record.setBackground(null);
-        record.setOpaque(true);
-        record.setLayout(null);
-        record.setBorder(new MatteBorder(1, 0, 1, 0, new Color(103, 92, 111)));
-
-        record.add(moreInformationButton);
-        moreInformationButton.addActionListener(e -> showDetailedPayment(id,informationForBeneficiaryText,true));
-
-        if (typesOfTransaction.equals(String.valueOf(TypesOfTransactionEnum.Credit))) {
-            record.add(super.textInPaymentHistoryBox("+", 20, typesOfTransaction, 20, 18, 15, 15));
-            String amountPlusEuro = "+ " + amount + " €";
-            record.add(super.textInPaymentHistoryBox(amountPlusEuro,16,typesOfTransaction,300,5,160,20));
-        } else if (typesOfTransaction.equals(String.valueOf(TypesOfTransactionEnum.Debit))) {
-            record.add(super.textInPaymentHistoryBox("-", 20, typesOfTransaction, 20, 18, 15, 15));
-            String amountPlusEuro = "- " + amount + " €";
-            record.add(super.textInPaymentHistoryBox(amountPlusEuro,16,typesOfTransaction,300,5,160,20));
-        }
-
-        record.add(super.textInPaymentHistoryBox(name,16,"white",55,5,250,20));
-        record.add(super.textInPaymentHistoryBox(typesOfTransaction,14,"white",55,29,50,15));
-
-        return record;
-    }
-
-    private void showDetailedPayment(String id, String informationForBeneficiary, boolean visible) {
-
-        detailedPayment = new JPanel();
-        detailedPayment.setLayout(null);
-        detailedPayment.setBounds(8,50,470,330); // 470,330
-        detailedPayment.setOpaque(true);
-        detailedPayment.setBackground(new Color(37, 11, 53));
-        detailedPayment.setBorder(null);
-        detailedPayment.setVisible(visible);
-        detailedPayment.add(super.scrollPanel(super.textAreaInPaymentHistoryBox(informationForBeneficiary, 14, 40, 150, 300, 150), 20, 150, 400, 170));
-        paymentHistoryScrollBar.setVisible(false);
-        topPanelBackButton.setVisible(true);
-        payments.add(detailedPayment,Integer.valueOf(3));
-
-//        return detailedPayment;
-    }
-
-    private void backButtonPressed() {
-        detailedPayment.setVisible(false);
-        paymentHistoryScrollBar.setVisible(true);
-        topPanelBackButton.setVisible(false);
     }
 
 

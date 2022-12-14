@@ -170,6 +170,7 @@ public class ApplicationLayout extends JFrame {
     }
 
 
+
     protected void textAreaSet(JTextArea textArea, String text,int x,int y,int width,int height, JTextField messageClear) {
 
         textArea.setLayout(null);
